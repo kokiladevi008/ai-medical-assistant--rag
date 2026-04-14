@@ -1,1 +1,125 @@
 
+# utils.py
+# ─────────────────────────────────────────────────────────────────────────────
+# Utility Functions
+# Handles text chunking and embedding generation.
+# ─────────────────────────────────────────────────────────────────────────────
+
+import re
+from typing import List
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TEXT CHUNKING
+# ─────────────────────────────────────────────────────────────────────────────
+
+def load_and_chunk_medical_data(filepath: str) -> List[str]:
+    """
+    Load the medical data file and split it into meaningful chunks.
+
+    Each medical condition block (separated by blank lines) becomes its
+    own chunk. This preserves the semantic coherence of each entry — all
+    symptom, description, and treatment information stays together.
+
+    Args:
+        filepath : Path to the medical_data.txt file.
+
+    Returns:
+        List of non-empty text chunks.
+    """
+    with open(filepath, "r", encoding="utf-8") as f:
+        raw_text = f.read()
+
+    # ── Split on double newlines (each condition is a separate block) ─────────
+    raw_chunks = raw_text.strip().split("\n\n")
+
+    # ── Clean each chunk: strip whitespace, skip empty blocks ─────────────────
+    chunks = [chunk.strip() for chunk in raw_chunks if chunk.strip()]
+
+    print(f"[Utils] 📄 Loaded {len(chunks)} medical chunks from '{filepath}'.")
+    return chunks
+
+
+def simple_chunk_by_sentences(
+    text: str,
+    chunk_size: int = 3,
+    overlap: int = 1,
+) -> List[str]:
+    """
+    Alternative chunker: splits any text into overlapping sentence windows.
+
+    Useful if you want finer-grained chunks rather than full condition blocks.
+
+    Args:
+        text       : Raw string to split.
+        chunk_size : Number of sentences per chunk.
+        overlap    : Number of sentences shared between consecutive chunks.
+
+    Returns:
+        List of text chunks.
+    """
+    # Split on sentence-ending punctuation
+    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
+    sentences = [s.strip() for s in sentences if s.strip()]
+
+    chunks = []
+    step = chunk_size - overlap
+    for i in range(0, len(sentences), step):
+        chunk = " ".join(sentences[i : i + chunk_size])
+        if chunk:
+            chunks.append(chunk)
+
+    return chunks
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EMBEDDING GENERATION
+# ─────────────────────────────────────────────────────────────────────────────
+
+def get_embeddings(texts: List[str]) -> List[List[float]]:
+    """
+    Convert a list of text strings into embedding vectors.
+
+    Uses the SentenceTransformers library with the lightweight
+    'all-MiniLM-L6-v2' model (22 MB) which produces 384-dimensional vectors.
+    This model is fast, free, runs locally, and works well for medical text.
+
+    Args:
+        texts : List of strings to embed.
+
+    Returns:
+        List of embedding vectors (each a list of floats).
+    """
+    try:
+        from sentence_transformers import SentenceTransformer
+    except ImportError:
+        raise ImportError(
+            "sentence-transformers is not installed.\n"
+            "Run: pip install sentence-transformers"
+        )
+
+    # ── Load model (cached after first download) ──────────────────────────────
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+
+    # ── Encode all texts at once (batched for efficiency) ─────────────────────
+    embeddings = model.encode(texts, show_progress_bar=False)
+
+    # ── Convert numpy arrays → plain Python lists for Endee ──────────────────
+    embeddings_list = [emb.tolist() for emb in embeddings]
+
+    print(f"[Utils] 🔢 Generated {len(embeddings_list)} embeddings "
+          f"(dim={len(embeddings_list[0])}).")
+    return embeddings_list
+
+
+def get_single_embedding(text: str) -> List[float]:
+    """
+    Convenience wrapper: embed a single string (e.g., a user query).
+
+    Args:
+        text : The query string to embed.
+
+    Returns:
+        Embedding vector as a list of floats.
+    """
+    return get_embeddings([text])[0]
