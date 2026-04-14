@@ -1,1 +1,71 @@
+CONDITION: Common Cold
+SYMPTOMS: runny nose, sneezing, sore throat, mild cough, low-grade fever, fatigue, nasal congestion
+DESCRIPTION: The common cold is a viral infection of the upper respiratory tract. It is caused by rhinoviruses and is highly contagious. Symptoms typically begin 1-3 days after exposure and last 7-10 days.
+TREATMENT: Rest, stay hydrated, over-the-counter decongestants, antihistamines, throat lozenges. Antibiotics are not effective against viral infections. Steam inhalation and saline nasal sprays can help relieve congestion.
+WHEN TO SEE A DOCTOR: Fever above 103Â°F (39.4Â°C), symptoms lasting more than 10 days, severe headache, difficulty breathing, or chest pain.
 
+CONDITION: Influenza (Flu)
+SYMPTOMS: high fever, severe body aches, chills, headache, dry cough, extreme fatigue, sore throat, vomiting, diarrhea
+DESCRIPTION: Influenza is a contagious respiratory illness caused by influenza viruses. It can cause mild to severe illness and at times can lead to hospitalization or death. It spreads mainly through respiratory droplets.
+TREATMENT: Antiviral drugs like oseltamivir (Tamiflu) within 48 hours of symptom onset, rest, fluids, fever reducers like ibuprofen or acetaminophen. Annual flu vaccination is the best prevention.
+WHEN TO SEE A DOCTOR: Difficulty breathing, persistent chest pain, confusion, severe vomiting, symptoms that improve then return with fever.
+
+CONDITION: Type 2 Diabetes
+SYMPTOMS: frequent urination, excessive thirst, unexplained weight loss, blurred vision, slow-healing wounds, frequent infections, tingling or numbness in hands and feet, fatigue
+DESCRIPTION: Type 2 diabetes is a chronic condition affecting how the body metabolizes sugar (glucose). The body either doesn't produce enough insulin or doesn't use insulin effectively. It is largely preventable and manageable through lifestyle changes.
+TREATMENT: Lifestyle modifications (diet, exercise), oral medications like metformin, insulin therapy if needed, blood sugar monitoring, regular check-ups.
+WHEN TO SEE A DOCTOR: If you experience symptoms, especially if you have risk factors such as obesity, family history, or sedentary lifestyle. Regular screening after age 45.
+
+CONDITION: Hypertension (High Blood Pressure)
+SYMPTOMS: often asymptomatic, severe headache, shortness of breath, nosebleeds, flushing, dizziness, chest pain, visual changes (in severe cases)
+DESCRIPTION: Hypertension is a condition in which blood pressure in the arteries is persistently elevated. Often called the "silent killer" because most people have no symptoms. It significantly increases risk of heart disease and stroke.
+TREATMENT: Lifestyle changes (low-sodium diet, exercise, weight loss, reduce alcohol), antihypertensive medications like ACE inhibitors, beta-blockers, calcium channel blockers. Regular blood pressure monitoring is essential.
+WHEN TO SEE A DOCTOR: Blood pressure reading above 130/80 mmHg consistently, or any sudden severe headache, vision problems, or chest pain.
+
+CONDITION: Migraine
+SYMPTOMS: throbbing headache on one side, nausea, vomiting, sensitivity to light and sound, visual disturbances (aura), dizziness, numbness or tingling
+DESCRIPTION: A migraine is a neurological condition that causes intense, debilitating headaches often accompanied by other symptoms. Episodes can last 4-72 hours and can be triggered by stress, hormonal changes, certain foods, or sensory stimuli.
+TREATMENT: Over-the-counter pain relievers, triptans for moderate to severe migraines, anti-nausea medications, rest in a dark and quiet room, cold or warm compresses. Preventive medications for frequent migraines.
+WHEN TO SEE A DOCTOR: Sudden severe headache, headache with fever and stiff neck, neurological symptoms, or headaches increasing in frequency or severity.
+
+CONDITION: Asthma
+SYMPTOMS: wheezing, shortness of breath, chest tightness, chronic cough especially at night, difficulty breathing during exercise, rapid breathing
+DESCRIPTION: Asthma is a condition in which the airways narrow and swell, producing extra mucus. This can make breathing difficult and trigger coughing, wheezing, and shortness of breath. It can be triggered by allergens, exercise, cold air, or respiratory infections.
+TREATMENT: Inhaled corticosteroids, bronchodilators (rescue inhalers like albuterol), avoiding triggers, allergy medications. Asthma action plans help manage flare-ups.
+WHEN TO SEE A DOCTOR: Symptoms not controlled by current medication, increasing use of rescue inhaler, severe breathlessness, or blue tinge to lips/fingernails.
+
+CONDITION: Urinary Tract Infection (UTI)
+SYMPTOMS: burning sensation during urination, frequent urge to urinate, cloudy or strong-smelling urine, pelvic pain, blood in urine, lower abdominal pain, low-grade fever
+DESCRIPTION: A urinary tract infection is an infection in any part of the urinary system including kidneys, bladder, and urethra. UTIs are most common in women. Bacteria, usually E. coli, are the most common cause.
+TREATMENT: Antibiotics (trimethoprim, nitrofurantoin, ciprofloxacin), increased water intake, avoiding caffeine and alcohol, urinating frequently.
+WHEN TO SEE A DOCTOR: Symptoms of UTI always warrant a doctor visit. If fever, chills, back pain, or nausea develop, seek immediate attention as this may indicate kidney infection.
+
+CONDITION: Anxiety Disorder
+SYMPTOMS: excessive worry, restlessness, fatigue, difficulty concentrating, irritability, muscle tension, sleep disturbances, panic attacks, rapid heartbeat, sweating
+DESCRIPTION: Anxiety disorders are characterized by persistent, excessive fear or worry in situations that are not threatening. It's the most common mental health condition and includes generalized anxiety disorder, panic disorder, and social anxiety disorder.
+TREATMENT: Psychotherapy (cognitive behavioral therapy), medications (SSRIs, SNRIs, benzodiazepines for short-term), relaxation techniques, mindfulness, regular exercise, and limiting caffeine and alcohol.
+WHEN TO SEE A DOCTOR: When anxiety interferes with daily life, work, or relationships. Seek immediate help if experiencing panic attacks or thoughts of self-harm.
+
+CONDITION: Gastroesophageal Reflux Disease (GERD)
+SYMPTOMS: heartburn, regurgitation of food or sour liquid, difficulty swallowing, chest pain, dry cough, hoarseness, sensation of lump in throat, worsening symptoms at night
+DESCRIPTION: GERD occurs when stomach acid frequently flows back into the tube connecting the mouth and stomach (esophagus). This acid reflux can irritate the lining of the esophagus. It is a chronic digestive disease.
+TREATMENT: Lifestyle modifications (avoid trigger foods, elevate head of bed, eat smaller meals), antacids, H2 blockers, proton pump inhibitors (omeprazole). Surgery in severe cases.
+WHEN TO SEE A DOCTOR: Heartburn more than twice a week, symptoms that persist despite medication, difficulty swallowing, or unexplained weight loss.
+
+CONDITION: Hypothyroidism (Underactive Thyroid)
+SYMPTOMS: fatigue, weight gain, cold intolerance, constipation, dry skin, puffy face, brittle nails, hair loss, slow heart rate, depression, muscle weakness, impaired memory
+DESCRIPTION: Hypothyroidism is a condition in which the thyroid gland doesn't produce enough thyroid hormone. It affects metabolism and can cause various symptoms. Hashimoto's thyroiditis is the most common cause.
+TREATMENT: Synthetic thyroid hormone medication (levothyroxine) taken daily, regular TSH blood tests to monitor dosage, dietary support with adequate iodine and selenium.
+WHEN TO SEE A DOCTOR: If experiencing multiple symptoms listed above, especially fatigue and unexplained weight gain. Regular monitoring if already diagnosed.
+
+CONDITION: Anemia (Iron Deficiency)
+SYMPTOMS: extreme fatigue, weakness, pale skin, shortness of breath, dizziness, chest pain, cold hands and feet, headache, brittle nails, unusual cravings for non-food items (pica)
+DESCRIPTION: Iron deficiency anemia occurs when the body doesn't have enough iron to produce sufficient hemoglobin. It's the most common type of anemia worldwide, especially in women of childbearing age.
+TREATMENT: Iron supplements, iron-rich diet (red meat, leafy greens, legumes, fortified cereals), vitamin C to enhance iron absorption, treating underlying cause of blood loss.
+WHEN TO SEE A DOCTOR: Persistent fatigue, pale appearance, or unexplained shortness of breath. Blood tests can confirm diagnosis.
+
+CONDITION: Osteoarthritis
+SYMPTOMS: joint pain, stiffness especially in the morning, swelling around joints, reduced range of motion, grating sensation in joint, bone spurs, tenderness when pressing on joint area
+DESCRIPTION: Osteoarthritis is the most common form of arthritis, affecting the cartilage in joints. It commonly affects hands, knees, hips, and spine. Age, obesity, and joint injuries are major risk factors.
+TREATMENT: Pain relievers (acetaminophen, NSAIDs), physical therapy, exercise, weight management, corticosteroid injections, joint replacement surgery in severe cases.
+WHEN TO SEE A DOCTOR: Joint pain or stiffness that doesn't improve with rest, swelling, reduced range of motion, or symptoms that affect daily activities.
