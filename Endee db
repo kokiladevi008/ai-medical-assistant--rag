@@ -1,1 +1,130 @@
+# endee_db.py
+# ─────────────────────────────────────────────────────────────────────────────
+# Endee Vector Database Integration
+# Handles storing and searching embeddings using the Endee vector database.
+# Endee is a lightweight, in-memory vector database that supports cosine
+# similarity search — perfect for RAG pipelines.
+# ─────────────────────────────────────────────────────────────────────────────
 
+import numpy as np
+from typing import List, Dict, Tuple
+
+
+class EndeeVectorDB:
+    """
+    A wrapper around Endee vector database operations.
+
+    Endee stores each record as:
+        { "id": str, "embedding": List[float], "metadata": dict }
+
+    It supports:
+        - insert()  : store a vector with metadata
+        - search()  : cosine-similarity search for top-k results
+        - delete()  : remove a record by id
+        - count()   : number of stored records
+    """
+
+    def __init__(self, collection_name: str = "medical_knowledge"):
+        """
+        Initialise the Endee collection.
+
+        Args:
+            collection_name (str): Name of the Endee collection to use.
+        """
+        try:
+            # ── Import Endee ──────────────────────────────────────────────────
+            import endee
+            self.db = endee.Collection(name=collection_name)
+            self.collection_name = collection_name
+            print(f"[Endee] ✅ Collection '{collection_name}' initialised.")
+        except ImportError:
+            raise ImportError(
+                "Endee is not installed. Run: pip install endee"
+            )
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # STORE
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def store_embeddings(
+        self,
+        chunks: List[str],
+        embeddings: List[List[float]],
+    ) -> int:
+        """
+        Store text chunks and their embeddings into Endee.
+
+        Args:
+            chunks     : List of raw text chunks.
+            embeddings : Corresponding list of embedding vectors.
+
+        Returns:
+            Number of records inserted.
+        """
+        count = 0
+        for idx, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+            record_id = f"chunk_{idx}"
+
+            # Each Endee record carries the original text as metadata so we
+            # can return it alongside the similarity score during retrieval.
+            self.db.insert(
+                id=record_id,
+                vector=embedding,          # the dense embedding vector
+                metadata={"text": chunk},  # raw text for answer generation
+            )
+            count += 1
+
+        print(f"[Endee] ✅ Stored {count} chunks into '{self.collection_name}'.")
+        return count
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # SEARCH
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def search(
+        self,
+        query_embedding: List[float],
+        top_k: int = 3,
+    ) -> List[Dict]:
+        """
+        Retrieve the top-k most similar chunks for a query embedding.
+
+        Endee uses cosine similarity internally, so we get back the most
+        semantically relevant chunks to the user's medical question.
+
+        Args:
+            query_embedding : Embedding vector of the user's question.
+            top_k           : How many chunks to retrieve.
+
+        Returns:
+            List of dicts with keys: 'id', 'score', 'text'
+        """
+        # ── Query Endee ───────────────────────────────────────────────────────
+        results = self.db.search(vector=query_embedding, top_k=top_k)
+
+        # ── Normalise results into a clean format ─────────────────────────────
+        retrieved = []
+        for result in results:
+            retrieved.append(
+                {
+                    "id":    result.id,
+                    "score": round(result.score, 4),   # cosine similarity
+                    "text":  result.metadata["text"],  # original chunk text
+                }
+            )
+
+        print(f"[Endee] 🔍 Retrieved {len(retrieved)} chunks for query.")
+        return retrieved
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # UTILITY
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def count(self) -> int:
+        """Return the number of records stored in the collection."""
+        return self.db.count()
+
+    def clear(self) -> None:
+        """Delete all records from the collection (use with care)."""
+        self.db.clear()
+        print(f"[Endee] 🗑️  Collection '{self.collection_name}' cleared.")
