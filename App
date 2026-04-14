@@ -1,1 +1,334 @@
+# app.py
+# ─────────────────────────────────────────────────────────────────────────────
+# AI Medical Assistant — Streamlit Frontend
+# Entry point for the application. Run with: streamlit run app.py
+# ─────────────────────────────────────────────────────────────────────────────
 
+import os
+import streamlit as st
+from dotenv import load_dotenv
+
+# Load .env file (ANTHROPIC_API_KEY etc.)
+load_dotenv()
+
+from rag_pipeline import MedicalRAGPipeline
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PAGE CONFIG
+# ─────────────────────────────────────────────────────────────────────────────
+
+st.set_page_config(
+    page_title="AI Medical Assistant",
+    page_icon="🩺",
+    layout="centered",
+    initial_sidebar_state="expanded",
+)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CUSTOM CSS  — clean clinical aesthetic
+# ─────────────────────────────────────────────────────────────────────────────
+
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    /* ── App background ── */
+    .stApp {
+        background: linear-gradient(135deg, #f0f4ff 0%, #f8faff 60%, #e8f4f0 100%);
+    }
+
+    /* ── Header ── */
+    .hero-header {
+        text-align: center;
+        padding: 2rem 0 1rem 0;
+    }
+    .hero-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 2.6rem;
+        color: #1a2f5e;
+        margin-bottom: 0.2rem;
+        letter-spacing: -0.5px;
+    }
+    .hero-subtitle {
+        font-size: 1rem;
+        color: #5a6a8a;
+        font-weight: 300;
+    }
+
+    /* ── Cards ── */
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        margin: 1rem 0;
+        box-shadow: 0 2px 20px rgba(30, 60, 120, 0.06);
+        border: 1px solid rgba(180, 200, 240, 0.3);
+    }
+    .card-title {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7b8fbb;
+        margin-bottom: 0.75rem;
+    }
+
+    /* ── Answer box ── */
+    .answer-card {
+        background: linear-gradient(135deg, #1a2f5e 0%, #2a4a8e 100%);
+        border-radius: 16px;
+        padding: 1.8rem 2rem;
+        margin: 1rem 0;
+        box-shadow: 0 8px 30px rgba(30, 60, 120, 0.18);
+    }
+    .answer-card .card-title {
+        color: rgba(255,255,255,0.5);
+    }
+    .answer-text {
+        color: white;
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    /* ── Source chunks ── */
+    .source-card {
+        background: #f8faff;
+        border-left: 4px solid #4a7cdc;
+        border-radius: 0 12px 12px 0;
+        padding: 1rem 1.4rem;
+        margin: 0.6rem 0;
+        font-size: 0.88rem;
+        color: #3a4a6a;
+        line-height: 1.6;
+    }
+    .score-badge {
+        display: inline-block;
+        background: #4a7cdc;
+        color: white;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 20px;
+        margin-bottom: 0.5rem;
+    }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+        background: #fff8e7;
+        border: 1px solid #f0d070;
+        border-radius: 10px;
+        padding: 0.9rem 1.2rem;
+        font-size: 0.82rem;
+        color: #7a6010;
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    /* ── Status messages ── */
+    .status-ok   { color: #2e7d32; font-weight: 500; font-size: 0.9rem; }
+    .status-warn { color: #c65100; font-weight: 500; font-size: 0.9rem; }
+
+    /* ── Streamlit widget tweaks ── */
+    div[data-testid="stTextArea"] textarea {
+        border-radius: 12px !important;
+        border: 1.5px solid #c0d0f0 !important;
+        font-family: 'DM Sans', sans-serif !important;
+        font-size: 1rem !important;
+    }
+    div[data-testid="stButton"] > button {
+        background: linear-gradient(135deg, #1a2f5e, #3a6adc) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 600 !important;
+        font-family: 'DM Sans', sans-serif !important;
+        transition: opacity 0.2s !important;
+        width: 100% !important;
+    }
+    div[data-testid="stButton"] > button:hover {
+        opacity: 0.88 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SESSION STATE — initialise pipeline once per session
+# ─────────────────────────────────────────────────────────────────────────────
+
+@st.cache_resource(show_spinner=False)
+def init_pipeline() -> MedicalRAGPipeline:
+    """Build the RAG pipeline and index the knowledge base (runs once)."""
+    pipeline = MedicalRAGPipeline(
+        data_path="data/medical_data.txt",
+        top_k=3,
+    )
+    pipeline.build_index()
+    return pipeline
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SIDEBAR
+# ─────────────────────────────────────────────────────────────────────────────
+
+with st.sidebar:
+    st.markdown("### ⚙️ Configuration")
+
+    show_sources = st.toggle("Show retrieved source chunks", value=True)
+    top_k = st.slider("Chunks to retrieve (top-k)", 1, 5, 3)
+
+    st.markdown("---")
+    st.markdown("### 🗂️ Knowledge Base")
+
+    # Try to initialise and show status
+    try:
+        pipeline = init_pipeline()
+        pipeline.top_k = top_k   # update dynamically from slider
+        chunk_count = pipeline.db.count()
+        st.markdown(
+            f'<p class="status-ok">✅ {chunk_count} chunks indexed in Endee</p>',
+            unsafe_allow_html=True,
+        )
+    except Exception as e:
+        st.markdown(
+            f'<p class="status-warn">⚠️ Pipeline error: {e}</p>',
+            unsafe_allow_html=True,
+        )
+        pipeline = None
+
+    st.markdown("---")
+    st.markdown("### 📌 Sample Questions")
+    sample_questions = [
+        "What are the symptoms of diabetes?",
+        "How is asthma treated?",
+        "What causes high blood pressure?",
+        "What are migraine symptoms?",
+        "How to treat UTI?",
+    ]
+    for q in sample_questions:
+        if st.button(q, key=q):
+            st.session_state["prefill_query"] = q
+
+    st.markdown("---")
+    st.markdown(
+        "<small style='color:#aaa'>Built with Python · Streamlit · Endee · Claude</small>",
+        unsafe_allow_html=True,
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MAIN PAGE
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Hero header
+st.markdown(
+    """
+    <div class="hero-header">
+        <div class="hero-title">🩺 AI Medical Assistant</div>
+        <div class="hero-subtitle">
+            RAG-powered answers retrieved from a curated medical knowledge base via Endee
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Pre-fill query from sidebar sample click
+default_query = st.session_state.pop("prefill_query", "")
+
+# ── Question input ────────────────────────────────────────────────────────────
+query = st.text_area(
+    label="Your medical question",
+    value=default_query,
+    placeholder="e.g.  What are the symptoms of hypothyroidism?",
+    height=100,
+    label_visibility="collapsed",
+)
+
+ask_button = st.button("🔍  Get Answer")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PIPELINE EXECUTION
+# ─────────────────────────────────────────────────────────────────────────────
+
+if ask_button:
+    if not query.strip():
+        st.warning("Please enter a question before clicking Get Answer.")
+    elif pipeline is None:
+        st.error("Pipeline failed to initialise. Check the sidebar for details.")
+    else:
+        with st.spinner("Searching knowledge base and generating answer…"):
+            try:
+                answer, retrieved_chunks = pipeline.ask(query.strip())
+            except Exception as e:
+                st.error(f"Something went wrong: {e}")
+                st.stop()
+
+        # ── Answer card ───────────────────────────────────────────────────────
+        st.markdown(
+            f"""
+            <div class="answer-card">
+                <div class="card-title">🤖 AI Answer</div>
+                <div class="answer-text">{answer.replace(chr(10), '<br>')}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        # ── Source chunks (optional) ──────────────────────────────────────────
+        if show_sources and retrieved_chunks:
+            st.markdown(
+                '<div class="card"><div class="card-title">📚 Retrieved Sources from Endee</div>',
+                unsafe_allow_html=True,
+            )
+
+            # Show top 2 sources (as required), rest collapsed
+            display_chunks = retrieved_chunks[:2]
+
+            for i, chunk in enumerate(display_chunks, 1):
+                # Trim very long chunks for display
+                preview = chunk["text"][:500] + ("…" if len(chunk["text"]) > 500 else "")
+                st.markdown(
+                    f"""
+                    <div class="source-card">
+                        <span class="score-badge">Source {i} &nbsp;·&nbsp; similarity {chunk['score']:.3f}</span><br>
+                        {preview}
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            if len(retrieved_chunks) > 2:
+                with st.expander(f"Show {len(retrieved_chunks) - 2} more source(s)"):
+                    for i, chunk in enumerate(retrieved_chunks[2:], 3):
+                        preview = chunk["text"][:400] + ("…" if len(chunk["text"]) > 400 else "")
+                        st.markdown(
+                            f"""
+                            <div class="source-card">
+                                <span class="score-badge">Source {i} &nbsp;·&nbsp; similarity {chunk['score']:.3f}</span><br>
+                                {preview}
+                            </div>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+# ── Disclaimer ─────────────────────────────────────────────────────────────
+st.markdown(
+    """
+    <div class="disclaimer">
+        ⚠️ <strong>Medical Disclaimer:</strong> This tool is for informational purposes only.
+        It does <em>not</em> provide medical diagnoses or replace professional medical advice.
+        Always consult a qualified healthcare provider for any medical concerns.
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
